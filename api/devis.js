@@ -2,17 +2,20 @@
 const fs = require('fs');
 const path = require('path');
 const Handlebars = require('handlebars');
-const chromium = require('@sparticuz/chromium');
+const chromium = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
+
+const PACK_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar';
 
 const TEMPLATE_PATH = path.join(process.cwd(), 'templates', 'devis.hbs');
 const template = Handlebars.compile(fs.readFileSync(TEMPLATE_PATH, 'utf8'));
 
 async function lancerChromium() {
+  chromium.setGraphicsMode = false;
   return puppeteer.launch({
-    args: chromium.args,
+    args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
+    executablePath: await chromium.executablePath(PACK_URL),
     headless: chromium.headless,
   });
 }
