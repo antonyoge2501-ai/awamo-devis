@@ -1,0 +1,10 @@
+{
+  "name": "awamo-devis",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@sparticuz/chromium": "^131.0.0",
+    "handlebars": "^4.7.8",
+    "puppeteer-core": "^23.11.1"
+  }
+}
