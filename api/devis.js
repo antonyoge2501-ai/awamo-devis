@@ -1,16 +1,24 @@
 // api/devis.js
 const fs = require('fs');
 const path = require('path');
-const Handlebars = require('handlebars');
-const chromium = require('@sparticuz/chromium-min');
-const puppeteer = require('puppeteer-core');
 
 const PACK_URL = 'https://github.com/Sparticuz/chromium/releases/download/v149.0.0/chromium-v149.0.0-pack.x64.tar';
 
 const TEMPLATE_PATH = path.join(process.cwd(), 'templates', 'devis.hbs');
-const template = Handlebars.compile(fs.readFileSync(TEMPLATE_PATH, 'utf8'));
+const templateSource = fs.readFileSync(TEMPLATE_PATH, 'utf8');
+
+let _template = null;
+async function getTemplate() {
+  if (!_template) {
+    const Handlebars = (await import('handlebars')).default;
+    _template = Handlebars.compile(templateSource);
+  }
+  return _template;
+}
 
 async function lancerChromium() {
+  const chromium = (await import('@sparticuz/chromium-min')).default;
+  const puppeteer = (await import('puppeteer-core')).default;
   chromium.setGraphicsMode = false;
   return puppeteer.launch({
     args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
@@ -44,6 +52,7 @@ module.exports = async (req, res) => {
 
   let browser;
   try {
+    const template = await getTemplate();
     const html = template(data);
     browser = await lancerChromium();
     const page = await browser.newPage();
