@@ -66,7 +66,7 @@ module.exports = async (req, res) => {
                 (data.copro ? ' - ' + data.copro : '') + '.pdf';
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'inline; filename="' + nom.replace(/"/g, '') + '"');
-    res.status(200).send(pdf);
+    res.status(200).end(Buffer.from(pdf));
   } catch (err) {
     res.status(500).send('Erreur generation PDF : ' + (err && err.message ? err.message : err));
   } finally {
